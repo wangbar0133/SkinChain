@@ -4,7 +4,8 @@ import pymongo
 import traceback
 from bson import json_util
 
-class db():
+
+class Db(object):
     
     def __init__(self):
         try:
@@ -28,14 +29,12 @@ class db():
     def get_chain_len(self):
         return self.mycol.count()
     
-    def get_chain_by_index(self, index):
-        return json_util.dumps(self.mycol.find({},{"index": index}))
-    
+    def get_block_by_index(self, index):
+        return json_util.dumps(self.mycol.find({}, {"index": index}))
+
     def get_block_list_by_user(self, user):
-        return {
-            "send": json_util.dumps(self.mycol.find({},{"header.sender": user})),
-            "recive": json_util.dumps(self.mycol.find({},{"trans_list":{"$in":{"body.recive":user}}}))
-        }
-    
+        return set(json_util.dumps(self.mycol.find({}, {"header.sender": user}))
+                   + json_util.dumps(self.mycol.find({}, {"tran.recive": user})))
+
     def get_block_list_by_coin(self, coin):
-        return json_util.dumps(self.mycol.find({},{"tran.coin": coin}))
+        return json_util.dumps(self.mycol.find({}, {"tran.coin": coin}))
