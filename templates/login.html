@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+
+    {% block content %}
+    <h1>登录</h1>
+    <form action="" method="post">
+        <table>
+            <tr>
+                <td>
+                    username:
+                </td>
+                <td>
+                    <input type="text" name="username" id="username" maxlength="64" style="width:500px">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    password:
+                </td>
+                <td>
+                    <input type="text" name="password" id="password" maxlength="64" style="width:500px">
+                </td>
+            </tr>
+        </table>
+        <input type="submit" onclick="check_form()" value='{{("确定")}}'>
+        <p>{{ status }}</p>
+    </form>
+    <script>
+        function check_form(){
+            var username = document.getElementById("username").value;
+            var password = document.getElementById("password").value;
+
+            if (username.length == 0){
+                alert("请输入用户名");
+                return false;
+            }
+
+            if(password.length == 0){
+                alert("请输入密码");
+                return false;
+            }
+
+            if (username.length != 64){
+                alert("用户名长度应为64");
+                return false;
+            }
+
+            if (password.length != 64){
+                alert("密码长度应为64");
+                return false;
+            }
+
+            reg_str = "^[a-z0-9]+$";
+            var reg = new RegExp(reg_str);
+
+            if (!reg.test(username)){
+                alert("用户名应为数字与小写字母");
+                return false;
+            }
+
+            if (!reg.test(password)){
+                alert("密码应为数字与小写字母");
+                return false;
+            }
+
+            console.log("成功");
+            return true;
+        }
+    </script>
+    {% endblock %}

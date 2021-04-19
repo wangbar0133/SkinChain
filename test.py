@@ -3,9 +3,10 @@ import time
 import json
 import ed25519
 
-def test():
-    print("123")
-    return "1234"
+from src.user.account import Account
+
 
 if __name__ == "__main__":
-    print(test())
+    username, password = Account().create_account()
+    print(username)
+    print(password)

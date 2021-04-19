@@ -2,11 +2,11 @@ import os
 import json
 import ed25519
 
-from ..block_chain.block import BlockChain, Block
-from ..p2p.udp import push_block
+from src.block_chain.block import BlockChain, Block
+from src.p2p.udp import push_block
 
 
-class Account():
+class Account(object):
     """用户对象"""
     def __init__(self):
         self.signing_key, self.verifying_key = ed25519.create_keypair()
@@ -16,7 +16,10 @@ class Account():
         self.VerifiyingKey = self.verifying_key
         self.Username = str(self.PublicKey)[2:-1]
         self.Password = str(self.PrivateKey)[2:-1]
-    
+
+    def create_account(self):
+        return self.Username, self.Password
+
 
 class AccountOpertion(BlockChain):
     """用户操作对象"""
@@ -74,3 +77,6 @@ class AccountOpertion(BlockChain):
                 break
         ip_list_su = push_block(block)
         return ip_list_su
+
+
+

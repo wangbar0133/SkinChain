@@ -70,3 +70,11 @@ def check_hash(string, hash_value):
     sha.update(string)
     return hash_value == sha.hexdigest()
 
+
+def check_password(username, password):
+    """检查账户密码是否正确，返回bool"""
+    sig = bytes(password, encoding="utf8")
+    vkey_hex = bytes(username, encoding="utf8")
+    signature_key = ed25519.SigningKey(sig, encoding="hex")
+    verifying_key = ed25519.VerifyingKey(vkey_hex, encoding="hex")
+    return verifying_key == signature_key.get_verifying_key()

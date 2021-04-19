@@ -1,3 +1,5 @@
 class Config:
     PORT = 9999
+    SHACKPORT = 9998
     IPPOOL = "192.168.0.255"
+    SECRET_KEY = "SECRETKEY"

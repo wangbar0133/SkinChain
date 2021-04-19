@@ -4,9 +4,9 @@ import json
 import random
 import traceback
 
-from ..bin.encrypt import hash_sha256, sign, check_sign, check_hash
-from ..db.mongodb import Db
-from ..p2p.udp import get_max_index
+from src.bin.encrypt import hash_sha256, sign, check_sign, check_hash
+from src.db.mongodb import Db
+
 
 
 class Block(object):
@@ -93,10 +93,7 @@ class BlockChain(Db):
         top_block = self.get_top_block()
         return int(top_block["headers"]["block_hash"])
 
-    def updata(self):
-        host_top_index = self.get_top_block_index()
-        net_max_index, net_max_ip = get_max_index()
-        # if host_top_index < net_max_index:
+
 
 
 def check_block(block):
