@@ -4,9 +4,8 @@ import json
 import random
 import traceback
 
-from src.bin.encrypt import hash_sha256, sign, check_sign, check_hash
-from src.db.mongodb import Db
-
+from src.encrypt import hash_sha256, sign, check_sign, check_hash
+from src.mongodb import Db
 
 
 class Block(object):
@@ -55,18 +54,21 @@ class BlockChain(Db):
         for block in block_list:
             if block["header"]["sender"] == user and block["tran"]["recive"] != user:
                 user_history_list.append({
+                    "opt": "send",
                     "timestamp": block["timestamp"],
                     "recive": block["tran"]["recive"],
                     "coin": block["tran"]["coin"]
                 })
             elif block["header"]["recive"] == user and block["tran"]["sender"] != user:
                 user_history_list.append({
+                    "opt": "recive",
                     "timestamp": block["timestamp"],
                     "sender": block["tran"]["sender"],
                     "coin": block["tran"]["coin"]
                 })
             elif block["header"]["recive"] == user and block["tran"]["sender"] == user:
                 user_history_list.append({
+                    "opt": "create",
                     "timestamp": block["timestamp"],
                     "creater": block["tran"]["sender"],
                     "coin": block["tran"]["coin"]
@@ -95,26 +97,3 @@ class BlockChain(Db):
 
 
 
-
-def check_block(block):
-    """检查收到的块"""
-    result = True
-    try:
-        string = block["header"].__str__() + block["trans_list"].__str__()
-        sig = block["sign"]
-        user_name = block["header"]["sender"]
-        hash_value = block["block_hash"]
-        if not check_sign(string, sig, user_name):
-            result = False
-        if not check_hash(string, hash_value):
-            result = False
-        block_index = int(block["header"]["index"])
-        db_top_index = BlockChain().get_top_block_index()
-        if block_index != db_top_index + 1:
-            result = False
-        if block["header"]["pr_block_hash"] != BlockChain().get_top_block_hash():
-            result = False
-    except:
-        result = False
-    finally:
-        return result

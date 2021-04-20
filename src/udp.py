@@ -3,7 +3,7 @@ import time
 import json
 
 from config import Config
-from src.block_chain.block import check_block, BlockChain
+from account import check_block, BlockChain
 
 
 def get_host_ip():
@@ -146,7 +146,7 @@ def request_struct(request, data, address, timeout=None):
 
 
 class Client(object):
-
+    """UDP发送端"""
     def __init__(self):
         udp_cli_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         udp_cli_sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
@@ -171,6 +171,7 @@ class Client(object):
 
 
 def server():
+    """UDP接收端"""
     udp_server_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     udp_server_sock.bind((get_host_ip(), Config.PORT))
     udp_server_sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)

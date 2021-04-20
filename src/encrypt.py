@@ -36,6 +36,20 @@ def hash_sha256(string):
     return sha.hexdigest()
 
 
+def file_hash(file_path):
+    """对文件取哈希值"""
+    Bytes = 1024
+    md5 = hashlib.md5()
+    with open(file_path, 'rb') as f:
+        while True:
+            data = f.read(Bytes)
+            if data:
+                md5.update(data)
+            else:
+                break
+    return md5.hexdigest()
+
+
 def sign(string, responsible):
     """
     :param string: str

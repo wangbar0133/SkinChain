@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+    {% block content %}
+    <h1>上传皮肤文件</h1>
+    <div>
+        <tr>
+            <th>选择文件</th>
+                <input type="file" id="importFile"/>
+                <input type="button" οnclick="upload()"/>
+        </tr>
+    </div>
+    <script>
+        function get_file_path(){
+            var filename = document.getElementById("importFile").value;
+
+            reg_str = ".*(png|jpg|gif)$";
+            var reg = new RegExp(reg_str);
+
+            if (!reg.test(filename)){
+                alert("只支持上传png\jpg\gif");
+                return false;
+            }
+
+            data = {
+                "filepath": filename
+            }
+            $.ajax({
+                url:"/uploader/",
+                type:"post",
+                data:data,
+                dataType: 'json',
+                processData:false,
+                contentType:false,
+                success:function(data){
+                    if (data.status == "su"){
+                    alert("文件上传成功");
+                    }
+                },
+                error:function(e){
+                    alert("文件上传失败");
+                }
+        }
+    </script>
+    {% endblock %}
