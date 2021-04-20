@@ -13,16 +13,17 @@
         function get_file_path(){
             var filename = document.getElementById("importFile").value;
 
-            reg_str = ".*(png|jpg|gif)$";
+            reg_str = ".*jpg$";
             var reg = new RegExp(reg_str);
 
             if (!reg.test(filename)){
-                alert("只支持上传png\jpg\gif");
+                alert("只支持上传jpg");
                 return false;
             }
 
             data = {
-                "filepath": filename
+                "filepath": filename,
+                "username": {{ username }}
             }
             $.ajax({
                 url:"/uploader/",
@@ -33,11 +34,13 @@
                 contentType:false,
                 success:function(data){
                     if (data.status == "su"){
-                    alert("文件上传成功");
+                        alert("文件上传成功");
+                        window.location.replace("/uploader/" + data.index + "/");
                     }
                 },
                 error:function(e){
                     alert("文件上传失败");
+                    location.reload();
                 }
         }
     </script>

@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, redirect, session
 
 from src.encrypt import check_password, file_hash
 from src.account import Account, AccountOpertion, BlockChain
-from src.bin import copy_file
+from src.bin import copy_file, return_img_stream, get_pic_path
 
 from config import Config
 
@@ -89,13 +89,13 @@ def tran(user):
 
 
 @app.route('/user/<user>/tran/succese/<index>', methods=['POST', 'GET'])
-def succese(user, index):
+def succesed_tran(user, index):
     import time
     block = BlockChain().get_block_by_index(index)
     recive = block["tran"]["recive"]
     time = time.asctime(time.localtime(block["header"]["timestamp"]))
     coin = block["tran"]["coin"]
-    return render_template("succese.html",
+    return render_template("succesetran.html",
                            sender=user,
                            recive=recive,
                            time=time,
@@ -121,16 +121,23 @@ def show_coins(user):
 
 @app.route('/user/<user>/upload/', methods=['POST', 'GET'])
 def upload(user):
-    return render_template("upload.html", user=)
+    return render_template("upload.html", username=user)
 
 
 @app.route('/uploader/', methods=['POST', 'GET'])
 def uploader():
     file_path = request.get("filepath")
+    user_name = request.get("username")
     file_hash_value = file_hash(file_path)
     dst_path = Config.UPLOAD_FOLDER + file_hash_value
     if copy_file(file_path, dst_path):
-
+        # 文件p2p
+        user_obj = AccountOpertion(user_name)
+        index = user_obj.create_coin(coin=file_hash_value)
+        data = {
+            "status": "su",
+            "index": index,
+        }
     else:
         data = {
             "status": "err"
@@ -138,6 +145,17 @@ def uploader():
     return data
 
 
+@app.route('/uploader/<index>/', methods=['POST', 'GET'])
+def upload_ok(index):
+    import time
+    block = BlockChain().get_block_by_index(index)
+    time = time.asctime(time.localtime(block["header"]["timestamp"]))
+    coin = block["tran"]["coin"]
+    path = get_pic_path(coin)
+    return render_template("succeseupload.html",
+                           time=time,
+                           coin=coin,
+                           path=path)
 
 
 if __name__ == '__main__':

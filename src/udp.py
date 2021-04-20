@@ -162,6 +162,7 @@ class Client(object):
             self.udp_cli_sock.sendto(json.dumps(mesg).encode('utf-8'), addr)
         else:
             self.udp_cli_sock.sendto(json.dumps(mesg).encode('utf-8'), self.addr)
+        self.udp_cli_sock.close()
 
     def push_blocks(self, block_list, addr=None):
         self._push(request="chuanSongKuai", data=block_list, addr=addr)
@@ -192,6 +193,46 @@ def server():
                 for sync_index in range(index, host_index + 1):
                     block_list.append(BlockChain().get_block_by_index(sync_index))
                 Client().push_blocks(block_list=block_list, addr=addr)
+
+
+def send_file(path):
+    """向全网广播文件"""
+    addr = (Config.IPPOOL, Config.FILEPORT)
+    udp_cli_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    f = open(path, 'rb')
+    count = 0
+    while True:
+        if count == 0:
+            data = bytes(path,  encoding="utf8")
+            udp_cli_sock.sendto(data, addr)
+        data = f.read(1024)
+        if str(data) != "b''":
+            udp_cli_sock.sendto(data, addr)
+        else:
+            udp_cli_sock.sendto('end'.encode('utf-8'), addr)
+            break
+        count += 1
+    udp_cli_sock.close()
+
+
+def recive_file():
+    """接收文件"""
+    udp_server_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    udp_server_sock.bind((get_host_ip(), Config.FILEPORT))
+    count = 0
+    while True:
+        if count == 0:
+            data, client_addr = udp_server_sock.recvfrom(1024)
+            f = open(data, 'wb')
+        data, client_addr = udp_server_sock.recvfrom(1024)
+        if str(data) != "b'end'":
+            f.write(data)
+        else:
+            break
+        udp_server_sock.sendto('ok'.encode('utf-8'), client_addr)
+        count += 1
+    f.close()
+    udp_server_sock.close()
 
 
 if __name__ == "__main__":
