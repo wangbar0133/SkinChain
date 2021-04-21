@@ -1,39 +1,9 @@
-import os
-import time 
-import json
-import random
+import time
 import traceback
 
-from src.encrypt import hash_sha256, sign, check_sign, check_hash
-from src.mongodb import Db
+from src.bin.mongodb import Db
 
 
-class Block(object):
-    """区块对象"""
-    def __init__(self, index, sender, recive, pr_block_hash, coin, mesg):
-        self.block = {
-            "header": {
-                "index": index,
-                "pr_block_hash": pr_block_hash,
-                "timestamp": str(time.time()),
-                "sender": sender
-            },
-            "tran": {               
-                "recive": recive,
-                "coin": coin,
-                "mesg": mesg
-            },
-            "sign": sign(bytes(self.block["header"].__str__() + self.block["trans_list"].__str__(), encoding='UTF-8')),
-            "block_hash": hash_sha256(self.block["header"].__str__() + self.block["trans_list"].__str__())
-        }
-    
-    def print_block(self):
-        print(self.block)
-        
-    def add_tran(self, trans_list):
-        self.block["trans_list"].append(trans_list)
-        
-              
 class BlockChain(Db):
 
     def insert_block(self, block):
@@ -47,7 +17,7 @@ class BlockChain(Db):
 
     def add_block_to_blockchain(self, block):
         self.insert(block)
-    
+
     def get_user_history(self, user):
         block_list = self.get_block_list_by_user(user)
         user_history_list = []
@@ -55,25 +25,31 @@ class BlockChain(Db):
             if block["header"]["sender"] == user and block["tran"]["recive"] != user:
                 user_history_list.append({
                     "opt": "send",
-                    "timestamp": block["timestamp"],
+                    "timestamp": time.asctime(time.localtime(block["timestamp"])),
                     "recive": block["tran"]["recive"],
-                    "coin": block["tran"]["coin"]
+                    "coin": block["tran"]["coin"],
+                    "mesg": block["tran"]["mesg"]
                 })
             elif block["header"]["recive"] == user and block["tran"]["sender"] != user:
                 user_history_list.append({
                     "opt": "recive",
-                    "timestamp": block["timestamp"],
+                    "timestamp": time.asctime(time.localtime(block["timestamp"])),
                     "sender": block["tran"]["sender"],
-                    "coin": block["tran"]["coin"]
+                    "coin": block["tran"]["coin"],
+                    "mesg": block["tran"]["mesg"]
                 })
             elif block["header"]["recive"] == user and block["tran"]["sender"] == user:
                 user_history_list.append({
                     "opt": "create",
-                    "timestamp": block["timestamp"],
+                    "timestamp": time.asctime(time.localtime(block["timestamp"])),
                     "creater": block["tran"]["sender"],
-                    "coin": block["tran"]["coin"]
+                    "coin": block["tran"]["coin"],
+                    "mesg": block["tran"]["mesg"]
                 })
-        return sorted(user_history_list, key=lambda i: i['timestamp'])
+            user_history_list = sorted(user_history_list, key=lambda i: i['timestamp'])
+            for index, coin in enumerate(user_history_list):
+                user_history_list[index]["timestamp"] = time.asctime(time.localtime(coin["timestamp"]))
+        return user_history_list
 
     def get_coin_history(self, coin):
         block_list = self.get_block_list_by_coin(coin)
@@ -82,10 +58,13 @@ class BlockChain(Db):
             coin_list.append({
                 "timestamp": block["timestamp"],
                 "sender": block["sender"],
-                "recive": block["recive"]
+                "recive": block["tran"]["recive"],
+                "mesg": block["tran"]["mesg"]
             })
-
-        return sorted(coin_list, key=lambda i: i['timestamp'])
+        coin_list = sorted(coin_list, key=lambda i: i['timestamp'])
+        for index, value in enumerate(coin_list):
+            coin_list[index]["timestamp"] = time.asctime(time.localtime(coin["timestamp"]))
+        return coin_list
 
     def get_top_block_index(self):
         top_block = self.get_top_block()
@@ -94,6 +73,3 @@ class BlockChain(Db):
     def get_top_block_hash(self):
         top_block = self.get_top_block()
         return int(top_block["headers"]["block_hash"])
-
-
-

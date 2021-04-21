@@ -1,6 +1,29 @@
 {% extends 'base.html' %}
 
     {% block content %}
-
+    <h1>发送成功</h1>
+    <div>
+        <img src="{{ path }}">
+    </div>
+    <div>
+        <table>
+            <tr>
+                <th>时间</th>
+                <td>{{ time }}</td>
+            </tr>
+            <tr>
+                <th>皮肤哈希</th>
+                <td>{{ coin }}</td>
+            </tr>
+            <tr>
+                <th>发送者</th>
+                <td>{{ sender }}</td>
+            </tr>
+            <tr>
+                <th>接收者</th>
+                <td>{{ recive }}</td>
+            </tr>
+        </table>
+    </div>
 
     {% endblock %}

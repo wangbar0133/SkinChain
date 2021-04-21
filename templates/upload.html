@@ -3,11 +3,15 @@
     {% block content %}
     <h1>上传皮肤文件</h1>
     <div>
-        <tr>
-            <th>选择文件</th>
-                <input type="file" id="importFile"/>
-                <input type="button" οnclick="upload()"/>
-        </tr>
+        <table>
+            <tr>
+                <th>选择文件</th>
+                    <td>
+                        <input type="file" id="importFile"/>
+                        <button onclick="get_file_path()">上传</button>
+                    </td>
+            </tr>
+        </table>
     </div>
     <script>
         function get_file_path(){
@@ -42,6 +46,8 @@
                     alert("文件上传失败");
                     location.reload();
                 }
+
+            return true;
         }
     </script>
     {% endblock %}

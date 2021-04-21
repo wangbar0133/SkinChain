@@ -3,29 +3,27 @@
     {% block content %}
     <h1>用户中心</h1>
     <div>
-        <tr>
-            <th>
-                用户名:
-            </th>
+        <table>
+            <tr>
+                <th>
+                    用户名:
+                </th>
             <td>
                 {{ username }}
             </td>
-        </tr>
-        <tr>
-            <th>
-                钱包余额:
-            </th>
-            <td>
-                {{ coin_count }}
-            </td>
-        </tr>
+            </tr>
+            <tr>
+                <th>
+                    钱包余额:
+                </th>
+                <td>
+                    {{ coin_count }}
+                </td>
+            </tr>
+        </table>
     </div>
     <div>
-        <tr>
-            <a href="/user/{{ username }}/coins/">查看余额</a>
-        </tr>
-        <tr>
-            <a href="/user/{{ username }}/showtrans/">查看交易记录</a>
-        </tr>
+        <p><a href="/user/{{ username }}/showcoins/">查看余额</a></p>
+        <p><a href="/user/{{ username }}/showtrans/">查看交易记录</a></p>
     </div>
     {% endblock %}

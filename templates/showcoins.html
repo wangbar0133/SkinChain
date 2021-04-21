@@ -3,5 +3,16 @@
     {% block content %}
     <h1>资产</h1>
     <h2>{{ username }}</h2>
-
+    <table>
+        {% for item in pic_path_list %}
+        <tr>
+            <th>
+                <a href="/coin/{{ item.coin }}">{{ item.coin }}</a>
+            </th>
+            <td>
+                <img src="{{ item.path }}">
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
     {% endblock %}

@@ -1,22 +1,22 @@
 {% extends 'base.html' %}
 
     {% block content %}
-    <h1>交易记录</h1>
+    <img src="{{ path }}">
     <table>
         <tr>
             <th>时间</th>
-            <th>资产</th>
-            <th>描述</th>
+            <th>发送者</th>
+            <th>接收者</th>
             <th>消息</th>
         </tr>
         {% for item in coin_history %}
         <tr>
             <td>{{ item.timestamp }}</td>
             <td>
-                <a href="/coin/{{ item.coin }}/">{{ item.coin }}</a>
+                <a href="/user/{{ item.sender }}/">{{ item.sender }}</a>
             </td>
             <td>
-                {{ item.desc }}
+                <a href="/user/{{ item.recive }}/">{{ item.recive}}</a>
             </td>
             <td>
                 {{ item.mesg }}

@@ -3,7 +3,6 @@ import time
 import json
 
 from config import Config
-from account import check_block, BlockChain
 
 
 def get_host_ip():

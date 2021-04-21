@@ -2,5 +2,56 @@
 
     {% block content %}
     <h1>交易</h1>
+    <div>
+        <form action="" method="post">
+            <table>
+                <p>选择皮肤</p>
+                {% for item in pic_path_list %}
+                <tr>
+                    <th>
+                        <input type="checkbox" id="pic" value="{{ item.coin }}" />
+                    </th>
+                    <td>
+                        <img src="{{  item.path }}">
+                    </td>
+                </tr>
+                {% endfor %}
+                <p>输入目标账户</p>
+                <tr>
+                    <td>
+                        username:
+                    </td>
+                    <td>
+                        <input type="text" name="username" id="username" maxlength="64" style="width:500px">
+                    </td>
+                </tr>
+            </table>
+            <input type="submit" onclick="check_form()" value='{{("确定")}}'>
+        </form>
+    </div>
+    <script>
+        function check_form(){
+            var username = document.getElementById("username").value;
+            var coin = document.getElementById("username").value;
 
+            if (username.length == 0){
+                alert("请输入目标账户");
+                return false;
+            }
+
+            if (username.length != 64){
+                alert("用户名长度应为64");
+                return false;
+            }
+
+            reg_str = "^[a-z0-9]+$";
+            var reg = new RegExp(reg_str);
+
+            if (!reg.test(username)){
+                alert("用户名应为数字与小写字母");
+                return false;
+            }
+            return true;
+        }
+    </script>
     {% endblock %}

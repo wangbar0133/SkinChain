@@ -7,7 +7,13 @@ from config import Config
 
 
 if __name__ == "__main__":
-    path = "C:\\Users\\Administrator.DESKTOP-35V3OQH\\.vscode"
-    pic_path_dict = os.listdir(path)
-    pic_path = path + pic_path_dict[0]
-    print(pic_path)
+    list_test = []
+    for index in range(10):
+        list_test.append({
+            "value": index
+        })
+
+    for index, value in enumerate(list_test):
+        list_test[index]["value"] = str(value["value"])
+
+    print(list_test)

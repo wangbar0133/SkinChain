@@ -1,25 +1,12 @@
-import os
-import json
 import time
-import ed25519
+import json
+import socket
 
-from block import BlockChain, Block
-from udp import Client
+from config import Config
 
-
-class Account(object):
-    """用户对象"""
-    def __init__(self):
-        self.signing_key, self.verifying_key = ed25519.create_keypair()
-        self.PublicKey = self.verifying_key.to_ascii(encoding="hex")
-        self.PrivateKey = self.signing_key.to_ascii(encoding="hex")
-        self.SigningKey = self.signing_key
-        self.VerifiyingKey = self.verifying_key
-        self.Username = str(self.PublicKey)[2:-1]
-        self.Password = str(self.PrivateKey)[2:-1]
-
-    def create_account(self):
-        return self.Username, self.Password
+from src.bin.net import Client, UdpServerSock, get_host_ip
+from src.object.block import Block
+from src.object.blockchain import BlockChain
 
 
 class AccountOpertion(BlockChain):
@@ -115,6 +102,83 @@ class AccountOpertion(BlockChain):
         return index
 
 
+def server_block():
+    """UDP接收端(接收区块)"""
+    udp_server_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    udp_server_sock.bind((get_host_ip(), Config.PORT))
+    udp_server_sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
+    while True:
+        mesg, addr = udp_server_sock.recvfrom(65535)
+        mesg = json.loads(mesg.decode('utf-8'))
+        request = mesg["request"]
+        data = mesg["data"]
+        if request == "chuanSongKuai":
+            block_list = data
+            for block in block_list:
+                BlockChain().insert_block(block)
+        elif request == "sync":
+            host_index = BlockChain().get_top_block_index()
+            index = data
+            if host_index > index:
+                block_list = []
+                for sync_index in range(index, host_index + 1):
+                    block_list.append(BlockChain().get_block_by_index(sync_index))
+                Client().push_blocks(block_list=block_list, addr=addr)
+
+
+def find_node():
+    """查找网络上的节点"""
+    PORT = Config.SHACKPORT
+    ip_pool = Config.IPPOOL
+    address = (ip_pool, PORT)
+    udp_cli_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    udp_cli_sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
+    ip_list = []
+    for count in range(100):
+        udp_cli_sock.sendto("nodefinder".encode('utf-8'), address)
+        mesg, addr = udp_cli_sock.recvfrom(1024)
+        if mesg == "Node".encode('utf-8'):
+            ip_list.append(addr)
+    ip_list = set(ip_list)
+    return ip_list
+
+
+def response_find_node():
+    """监听并相应获取上线请求(守护进程)"""
+    udp_server_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    udp_server_sock.bind((get_host_ip(), Config.SHACKPORT))
+    udp_server_sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
+    while True:
+        mesg, addr = udp_server_sock.recvfrom(1024)
+        if mesg == "nodefinder".encode('utf-8'):
+            udp_server_sock.sendto(bytes("Node".encode('utf-8')), addr)
+
+
+def request_sync(index=int):
+    """根据索引请求同步链"""
+    PORT = Config.SYNCPORT
+    udp_cli_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    udp_cli_sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
+    ip_pool = find_node()
+    for ip in ip_pool:
+        address = (ip, PORT)
+        for count in range(5):
+            udp_cli_sock.sendto(str(index).encode('utf-8'), address)
+            time.sleep(0.2)
+
+
+def response_sync():
+    """(守护进程)"""
+    udp_server_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    udp_server_sock.bind((get_host_ip(), Config.SYNCPORT))
+    udp_server_sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
+    while True:
+        mesg, addr = udp_server_sock.recvfrom(1024)
+        index = int(mesg.decode('utf-8'))
+        if index < BlockChain().get_top_block_index():
+            block_list = []
+
+
 def check_block(block):
     """检查收到的块"""
     from encrypt import check_sign, check_hash
@@ -144,7 +208,3 @@ def check_block(block):
         result = False
     finally:
         return result
-
-
-if __name__ == "__main__":
-    print(Account().create_account())

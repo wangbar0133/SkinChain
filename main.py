@@ -1,8 +1,10 @@
 from flask import Flask, render_template, request, redirect, session
 
-from src.encrypt import check_password, file_hash
-from src.account import Account, AccountOpertion, BlockChain
-from src.bin import copy_file, return_img_stream, get_pic_path
+from src.bin.encrypt import check_password, file_hash
+from src.object.account import Account
+from src.mvc import AccountOpertion, BlockChain
+from src.bin.os import copy_file, return_img_stream, get_pic_path
+from src.udp import send_file
 
 from config import Config
 
@@ -78,6 +80,12 @@ def tran(user):
     else:
         user_obj = AccountOpertion(user)
         coin_list = user_obj.show_coins()
+        pic_path_list = []
+        for coin in coin_list:
+            pic_path_list.append({
+                "coin": coin,
+                "path": get_pic_path(coin)
+            })
         if request.method == 'POST':
             obj_username = request.form.get("obj_username")
             coin = request.form.get("coin")
@@ -85,21 +93,22 @@ def tran(user):
             index = user_obj.send_coin(recive=obj_username, coin=coin, mesg=message)
             return redirect('/user/' + user + "/tran/succese/" + index + "/")
         return render_template("tran.html",
-                               coin_list=coin_list)
+                               pic_path_list=pic_path_list)
 
 
 @app.route('/user/<user>/tran/succese/<index>', methods=['POST', 'GET'])
 def succesed_tran(user, index):
-    import time
     block = BlockChain().get_block_by_index(index)
     recive = block["tran"]["recive"]
-    time = time.asctime(time.localtime(block["header"]["timestamp"]))
+    time = block["header"]["timestamp"]
     coin = block["tran"]["coin"]
+    path = get_pic_path(coin)
     return render_template("succesetran.html",
                            sender=user,
                            recive=recive,
                            time=time,
-                           coin=coin)
+                           coin=coin,
+                           path=path)
 
 
 @app.route('/user/<user>/showtrans/', methods=['POST', 'GET'])
@@ -114,8 +123,14 @@ def show_trans(user):
 def show_coins(user):
     user_obj = AccountOpertion(user)
     coin_list = user_obj.show_coins()
+    pic_path_list = []
+    for coin in coin_list:
+        pic_path_list.append({
+            "coin": coin,
+            "path": get_pic_path(coin)
+        })
     return render_template("showcoins.html",
-                           coin_list=coin_list,
+                           pic_path_list=pic_path_list,
                            username=user)
 
 
@@ -131,7 +146,7 @@ def uploader():
     file_hash_value = file_hash(file_path)
     dst_path = Config.UPLOAD_FOLDER + file_hash_value
     if copy_file(file_path, dst_path):
-        # 文件p2p
+        send_file(dst_path)
         user_obj = AccountOpertion(user_name)
         index = user_obj.create_coin(coin=file_hash_value)
         data = {
@@ -155,6 +170,15 @@ def upload_ok(index):
     return render_template("succeseupload.html",
                            time=time,
                            coin=coin,
+                           path=path)
+
+
+@app.route('/coin/<coin>/', methods=['POST', 'GET'])
+def coin(coin):
+    coin_history = BlockChain().get_coin_history(coin)
+    path = get_pic_path(coin)
+    return render_template("coin.html",
+                           coin_history=coin_history,
                            path=path)
 
 
