@@ -1,3 +1,4 @@
+# -*-coding:utf-8-*-
 import hashlib
 import ed25519
 
@@ -58,3 +59,9 @@ def check_password(username, password):
     signature_key = ed25519.SigningKey(sig, encoding="hex")
     verifying_key = ed25519.VerifyingKey(vkey_hex, encoding="hex")
     return verifying_key == signature_key.get_verifying_key()
+
+
+if __name__ == "__main__":
+    path = r"C:\Users\Administrator.DESKTOP-35V3OQH\SkinChain\test\test.jpg"
+    print(file_hash(path))
+    pass

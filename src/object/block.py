@@ -18,8 +18,8 @@ class Block(object):
             "coin": coin,
             "mesg": mesg
         }
-        self.sign_value = sign(bytes(self.header.__str__() + self.tran.__str__(), encoding='UTF-8'), sender)
-        self.block_hash = hash_sha256(self.header.__str__() + self.tran.__str__() + self.sign_value)
+        self.sign_value = sign(self.header.__str__() + self.tran.__str__(), sender)
+        self.block_hash = hash_sha256((self.header.__str__() + self.tran.__str__() + self.sign_value).encode("utf8"))
         self.block = {
             "header": self.header,
             "tran": self.tran,
@@ -32,3 +32,27 @@ class Block(object):
 
     def add_tran(self, trans_list):
         self.block["trans_list"].append(trans_list)
+
+
+if __name__ == "__main__":
+    """
+    block = Block(index=0,
+                  sender="eb1d2b43aad8cf60ff9911a894f80ec4f4befccc6c61901d2cc72aac1b1d89d2",
+                  recive="eb1d2b43aad8cf60ff9911a894f80ec4f4befccc6c61901d2cc72aac1b1d89d2",
+                  pr_block_hash="asdasdad",
+                  coin="asdad",
+                  mesg="")
+    print(block.header)"""
+
+    """
+    string = {
+            "index": 0,
+            "pr_block_hash": "asdasdad",
+            "timestamp": str(time.time()),
+            "sender": "eb1d2b43aad8cf60ff9911a894f80ec4f4befccc6c61901d2cc72aac1b1d89d2"
+        }
+    sender = "eb1d2b43aad8cf60ff9911a894f80ec4f4befccc6c61901d2cc72aac1b1d89d2"
+    string = string.__str__()
+    sign_value = sign(string, sender)
+    print(sign_value)
+    """

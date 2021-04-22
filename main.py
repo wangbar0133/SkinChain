@@ -3,8 +3,9 @@ from flask import Flask, render_template, request, redirect, session
 from src.bin.encrypt import check_password, file_hash
 from src.object.account import Account
 from src.mvc import AccountOpertion, BlockChain
-from src.bin.os import copy_file, return_img_stream, get_pic_path
-from src.udp import send_file
+from src.bin.os import move_file, return_img_stream, get_pic_path
+from src.bin.net import send_file
+from src.bin.log import Log
 
 from config import Config
 
@@ -23,6 +24,8 @@ def root():
 @app.route('/login/', methods=['POST', 'GET'])
 def login():
     status = "请输入账户密码"
+    if session.get("username") and session.get("password"):
+        return redirect('/user/' + session.get("username") + '/')
     if request.method == 'POST':
         username = request.form.get("username")
         password = request.form.get("password")
@@ -72,28 +75,33 @@ def re_login():
         return redirect('/login/')
 
 
+@app.route('/tran/', methods=['POST', 'GET'])
+def go_tran():
+    if session.get("password") and session.get("username"):
+        username = session.get("username")
+        return redirect('/user/' + username + '/tran/')
+    else:
+        return redirect('/login/')
+
+
 @app.route('/user/<user>/tran/', methods=['POST', 'GET'])
 def tran(user):
-    if session.get("password") and session.get("username"):
-        username = session.get("password")
-        return redirect('/user/' + username + '/')
-    else:
-        user_obj = AccountOpertion(user)
-        coin_list = user_obj.show_coins()
-        pic_path_list = []
-        for coin in coin_list:
-            pic_path_list.append({
-                "coin": coin,
-                "path": get_pic_path(coin)
-            })
-        if request.method == 'POST':
-            obj_username = request.form.get("obj_username")
-            coin = request.form.get("coin")
-            message = request.form.get("message")
-            index = user_obj.send_coin(recive=obj_username, coin=coin, mesg=message)
-            return redirect('/user/' + user + "/tran/succese/" + index + "/")
-        return render_template("tran.html",
-                               pic_path_list=pic_path_list)
+    user_obj = AccountOpertion(user)
+    coin_list = user_obj.show_coins()
+    pic_path_list = []
+    for coin in coin_list:
+        pic_path_list.append({
+            "coin": coin,
+            "path": get_pic_path(coin)
+        })
+    if request.method == 'POST':
+        obj_username = request.form.get("obj_username")
+        coin = request.form.get("coin")
+        message = request.form.get("message")
+        index = user_obj.send_coin(recive=obj_username, coin=coin, mesg=message)
+        return redirect('/user/' + user + "/tran/succese/" + index + "/")
+    return render_template("tran.html",
+                           pic_path_list=pic_path_list)
 
 
 @app.route('/user/<user>/tran/succese/<index>', methods=['POST', 'GET'])
@@ -119,7 +127,7 @@ def show_trans(user):
                            trans=trans)
 
 
-@app.route('user/<user>/showcoins', methods=['POST', 'GET'])
+@app.route('/user/<user>/showcoins/', methods=['POST', 'GET'])
 def show_coins(user):
     user_obj = AccountOpertion(user)
     coin_list = user_obj.show_coins()
@@ -134,30 +142,35 @@ def show_coins(user):
                            username=user)
 
 
-@app.route('/user/<user>/upload/', methods=['POST', 'GET'])
-def upload(user):
-    return render_template("upload.html", username=user)
+@app.route('/upload/', methods=['POST', 'GET'])
+def upload():
+    if not (session.get("username") and session.get("password")):
+        return redirect('/login/')
+    username = session.get("username")
+    return render_template("upload.html", username=username)
 
 
 @app.route('/uploader/', methods=['POST', 'GET'])
 def uploader():
-    file_path = request.get("filepath")
-    user_name = request.get("username")
+    username = session.get("username")
+    print(request.files.get("photo"))
+    # img = request.files["photo"]
+    # mesg = request.form.get("mesg")
+    # file_path = Config.UPLOAD_FOLDER + "temp" + img.filename
+    # img.save(file_path)
+    """
     file_hash_value = file_hash(file_path)
     dst_path = Config.UPLOAD_FOLDER + file_hash_value
-    if copy_file(file_path, dst_path):
+    if move_file(file_path, dst_path):
         send_file(dst_path)
-        user_obj = AccountOpertion(user_name)
-        index = user_obj.create_coin(coin=file_hash_value)
-        data = {
-            "status": "su",
-            "index": index,
-        }
-    else:
-        data = {
-            "status": "err"
-        }
-    return data
+        user_obj = AccountOpertion(username)
+        index = user_obj.create_coin(coin=file_hash_value, mesg=mesg)
+        return redirect("/uploader/" + str(index) + "/")
+    """
+
+@app.route('/uploader/fail/', methods=['POST', 'GET'])
+def upload_fail():
+    return render_template("uploadfail.html")
 
 
 @app.route('/uploader/<index>/', methods=['POST', 'GET'])

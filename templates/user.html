@@ -2,6 +2,7 @@
 
     {% block content %}
     <h1>用户中心</h1>
+    <h3>已登录</h3>
     <div>
         <table>
             <tr>
@@ -25,5 +26,6 @@
     <div>
         <p><a href="/user/{{ username }}/showcoins/">查看余额</a></p>
         <p><a href="/user/{{ username }}/showtrans/">查看交易记录</a></p>
+        <p><a href="/logout/">登出</a></p>
     </div>
     {% endblock %}

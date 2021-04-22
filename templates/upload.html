@@ -2,52 +2,49 @@
 
     {% block content %}
     <h1>上传皮肤文件</h1>
+    <p id="username" value="{{ username }}">{{ username }}</p>
     <div>
-        <table>
-            <tr>
-                <th>选择文件</th>
-                    <td>
-                        <input type="file" id="importFile"/>
-                        <button onclick="get_file_path()">上传</button>
-                    </td>
-            </tr>
-        </table>
+        <form action="/uploader/" method="post" onsubmit="return check_form()" enctype='multipart/form-data'>
+            <input type="file" id="photo" name="photo"/>
+            <br>
+                消息
+            <br>
+            <input type="text" id="mesg" name="mesg" maxlength="70" style="width:200px"/>
+            <br>
+            <input type="submit" value="提交信息"/>
+        </form>
     </div>
     <script>
-        function get_file_path(){
-            var filename = document.getElementById("importFile").value;
+        function check_form(){
+            var filename = document.getElementById("photo").value;
+            var mesg = document.getElementById("mesg").value;
 
-            reg_str = ".*jpg$";
+            console.log(mesg);
+            console.log(filename);
+
+            var reg_str = ".*jpg$";
             var reg = new RegExp(reg_str);
+
+            if (!filename) {
+                alert("请选择文件");
+                return false;
+            }
 
             if (!reg.test(filename)){
                 alert("只支持上传jpg");
                 return false;
             }
 
-            data = {
-                "filepath": filename,
-                "username": {{ username }}
-            }
-            $.ajax({
-                url:"/uploader/",
-                type:"post",
-                data:data,
-                dataType: 'json',
-                processData:false,
-                contentType:false,
-                success:function(data){
-                    if (data.status == "su"){
-                        alert("文件上传成功");
-                        window.location.replace("/uploader/" + data.index + "/");
-                    }
-                },
-                error:function(e){
-                    alert("文件上传失败");
-                    location.reload();
-                }
+            var reg_str1 = "^[\u4E00-\u9FA5A-Za-z0-9]+$";
+            var reg1 = new RegExp(reg_str1);
 
-            return true;
+            if (mesg.length != 0){
+                if (!reg1.test(mesg)){
+                    alert("只支持中文、英文、数字");
+                    return false;
+                }
+            }
+            alert(" !");
         }
     </script>
     {% endblock %}

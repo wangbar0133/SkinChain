@@ -1,10 +1,13 @@
+# -*-coding:utf-8-*-
 import time
 import json
 import socket
 
 from config import Config
 
+from src.bin.log import Log
 from src.bin.net import Client, UdpServerSock, get_host_ip
+from src.bin.encrypt import check_sign, check_hash
 from src.object.block import Block
 from src.object.blockchain import BlockChain
 
@@ -19,6 +22,9 @@ class AccountOpertion(BlockChain):
     def show_coins(self):
         """展示一个用户的所有资产"""
         coin_dict = {}
+        user_history = self.user_history
+        if not user_history:
+            return []
         for history in self.user_history:
             coin = history["coin"]
             if "recive" in history.keys():
@@ -42,8 +48,10 @@ class AccountOpertion(BlockChain):
 
     def show_trans_history(self):
         """查看用户的历史纪录"""
-        history_list = self.get_user_history(self.user)
+        history_list = self.user_history
         user_history = []
+        if not user_history:
+            return []
         for history in history_list:
             if history["opt"] == "send":
                 user_history.append({
@@ -116,6 +124,7 @@ def server_block():
             block_list = data
             for block in block_list:
                 BlockChain().insert_block(block)
+
         elif request == "sync":
             host_index = BlockChain().get_top_block_index()
             index = data
@@ -162,26 +171,40 @@ def request_sync(index=int):
     ip_pool = find_node()
     for ip in ip_pool:
         address = (ip, PORT)
+        mesg = {
+            "request": "sync",
+            "data": index
+        }
         for count in range(5):
-            udp_cli_sock.sendto(str(index).encode('utf-8'), address)
+            udp_cli_sock.sendto(json.dumps(mesg).encode('utf-8'), address)
             time.sleep(0.2)
 
 
 def response_sync():
-    """(守护进程)"""
+    """同步请求(守护进程)"""
     udp_server_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     udp_server_sock.bind((get_host_ip(), Config.SYNCPORT))
     udp_server_sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
     while True:
         mesg, addr = udp_server_sock.recvfrom(1024)
-        index = int(mesg.decode('utf-8'))
-        if index < BlockChain().get_top_block_index():
-            block_list = []
+        mesg = json.loads(mesg.decode('utf-8'))
+        try:
+            request = mesg["request"]
+            if request == "sync":
+                request_index = int(mesg["data"])
+                host_index = BlockChain().get_top_block_index()
+                if request_index < host_index:
+                    block_list = []
+                    for index in range(request_index, host_index):
+                        block_list.append(BlockChain().get_block_by_index(index+1))
+                    Client().push_blocks(block_list)
+        except Exception as e:
+            Log().error("同步请求响应失败：" + str(e))
+            pass
 
 
 def check_block(block):
     """检查收到的块"""
-    from encrypt import check_sign, check_hash
     result = True
     try:
         string = block["header"].__str__() + block["trans_list"].__str__()
@@ -204,7 +227,9 @@ def check_block(block):
         coin_list = sender_obj.show_coins()
         if coin in coin_list:
             return False
-    except:
+    except Exception as e:
+        Log().error("检查区块合法性失败：" + str(e))
         result = False
     finally:
         return result
+

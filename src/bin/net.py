@@ -1,8 +1,10 @@
+# -*-coding:utf-8-*-
 import socket
 import time
 import json
 
 from config import Config
+from src.bin.log import Log
 
 
 def get_host_ip():
@@ -18,7 +20,10 @@ def send_file(path):
     """向全网广播文件，输入文件路径"""
     addr = (Config.IPPOOL, Config.FILEPORT)
     udp_cli_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    f = open(path, 'rb')
+    try:
+        f = open(path, 'rb')
+    except Exception as e:
+        Log().error("路径文件不存咋：" + str(e))
     count = 0
     while True:
         if count == 0:
@@ -35,7 +40,7 @@ def send_file(path):
 
 
 def recive_file():
-    """接收文件"""
+    """接收文件(守护进程)"""
     udp_server_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     udp_server_sock.bind((get_host_ip(), Config.FILEPORT))
     count = 0
@@ -47,11 +52,10 @@ def recive_file():
         if str(data) != "b'end'":
             f.write(data)
         else:
+            f.close()
             break
         udp_server_sock.sendto('ok'.encode('utf-8'), client_addr)
         count += 1
-    f.close()
-    udp_server_sock.close()
 
 
 class Client(object):

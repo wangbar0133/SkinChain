@@ -14,3 +14,9 @@ class Account(object):
 
     def create_account(self):
         return self.Username, self.Password
+
+
+if __name__ == "__main__":
+    print(Account().create_account())
+    pass
+

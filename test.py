@@ -4,16 +4,12 @@ import json
 import ed25519
 import os
 from config import Config
+import pymongo
 
 
 if __name__ == "__main__":
-    list_test = []
-    for index in range(10):
-        list_test.append({
-            "value": index
-        })
+    myclient = pymongo.MongoClient('mongodb://localhost:27017/')
 
-    for index, value in enumerate(list_test):
-        list_test[index]["value"] = str(value["value"])
+    mydb = myclient["skinchain"]
 
-    print(list_test)
+

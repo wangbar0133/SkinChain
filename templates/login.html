@@ -2,7 +2,7 @@
 
     {% block content %}
     <h1>登录</h1>
-    <form action="" method="post">
+    <form action="" method="post" onsubmit="return check_form()">
         <table>
             <tr>
                 <th>
@@ -21,7 +21,7 @@
                 </td>
             </tr>
         </table>
-        <input type="submit" onclick="check_form()" value='{{("确定")}}'>
+        <input type="submit" value='{{("确定")}}'>
         <p>{{ status }}</p>
     </form>
     <script>
@@ -61,9 +61,6 @@
                 alert("密码应为数字与小写字母");
                 return false;
             }
-
-
-            return true;
         }
     </script>
     {% endblock %}

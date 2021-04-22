@@ -1,5 +1,5 @@
 import time
-import traceback
+
 
 from src.bin.mongodb import Db
 
@@ -7,19 +7,12 @@ from src.bin.mongodb import Db
 class BlockChain(Db):
 
     def insert_block(self, block):
-        try:
-            self.insert(block)
-            result = True
-        except:
-            traceback.print_exc()
-            result = False
-        return result
-
-    def add_block_to_blockchain(self, block):
-        self.insert(block)
+        return self.insert(block)
 
     def get_user_history(self, user):
         block_list = self.get_block_list_by_user(user)
+        if not block_list:
+            return False
         user_history_list = []
         for block in block_list:
             if block["header"]["sender"] == user and block["tran"]["recive"] != user:
@@ -51,8 +44,12 @@ class BlockChain(Db):
                 user_history_list[index]["timestamp"] = time.asctime(time.localtime(coin["timestamp"]))
         return user_history_list
 
+
+
     def get_coin_history(self, coin):
         block_list = self.get_block_list_by_coin(coin)
+        if not block_list:
+            return False
         coin_list = []
         for block in block_list:
             coin_list.append({
