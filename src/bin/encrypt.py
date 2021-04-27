@@ -62,6 +62,9 @@ def check_password(username, password):
 
 
 if __name__ == "__main__":
-    path = r"C:\Users\Administrator.DESKTOP-35V3OQH\SkinChain\test\test.jpg"
+    path = r"C:\Users\Administrator.DESKTOP-35V3OQH\SkinChain\coins\fc503153dab068850d83a3e7dbb88585\1f0e6968fc800be658bbb21ef27c18af.jpeg"
     print(file_hash(path))
+
+    # print(len("96cae35ce8a9b0244178bf28e4966c2ce1b8385723a96a6b838858cdd6ca0a1e"))
+
     pass

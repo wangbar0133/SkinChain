@@ -22,7 +22,7 @@
             console.log(mesg);
             console.log(filename);
 
-            var reg_str = ".*jpg$";
+            var reg_str = ".*jpg|jpeg$";
             var reg = new RegExp(reg_str);
 
             if (!filename) {
@@ -44,7 +44,6 @@
                     return false;
                 }
             }
-            alert(" !");
         }
     </script>
     {% endblock %}

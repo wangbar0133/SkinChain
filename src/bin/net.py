@@ -3,6 +3,8 @@ import socket
 import time
 import json
 
+from bson import json_util
+
 from config import Config
 from src.bin.log import Log
 
@@ -72,9 +74,9 @@ class Client(object):
             "data": data
         }
         if addr:
-            self.udp_cli_sock.sendto(json.dumps(mesg).encode('utf-8'), addr)
+            self.udp_cli_sock.sendto(json_util.dumps(mesg).encode('utf-8'), addr)
         else:
-            self.udp_cli_sock.sendto(json.dumps(mesg).encode('utf-8'), self.addr)
+            self.udp_cli_sock.sendto(json_util.dumps(mesg).encode('utf-8'), self.addr)
         self.udp_cli_sock.close()
 
     def push_blocks(self, block_list, addr=None):

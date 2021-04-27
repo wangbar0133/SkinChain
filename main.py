@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, session
+from flask import Flask, render_template, request, redirect, session, make_response
 
 from src.bin.encrypt import check_password, file_hash
 from src.object.account import Account
@@ -131,14 +131,14 @@ def show_trans(user):
 def show_coins(user):
     user_obj = AccountOpertion(user)
     coin_list = user_obj.show_coins()
-    pic_path_list = []
+    img_url_list = []
     for coin in coin_list:
-        pic_path_list.append({
+        img_url_list.append({
             "coin": coin,
-            "path": get_pic_path(coin)
+            "img_url": "/display/img/" + coin
         })
     return render_template("showcoins.html",
-                           pic_path_list=pic_path_list,
+                           img_url_list=img_url_list,
                            username=user)
 
 
@@ -153,20 +153,19 @@ def upload():
 @app.route('/uploader/', methods=['POST', 'GET'])
 def uploader():
     username = session.get("username")
-    print(request.files.get("photo"))
-    # img = request.files["photo"]
-    # mesg = request.form.get("mesg")
-    # file_path = Config.UPLOAD_FOLDER + "temp" + img.filename
-    # img.save(file_path)
-    """
+    img = request.files.get("photo")
+    mesg = request.form.get("mesg")
+    file_path = Config.UPLOAD_FOLDER + "temp\\" + img.filename
+    img.save(file_path)
     file_hash_value = file_hash(file_path)
-    dst_path = Config.UPLOAD_FOLDER + file_hash_value
+    dst_path = Config.UPLOAD_FOLDER + file_hash_value + "\\"
+    dst_file = dst_path + img.filename
     if move_file(file_path, dst_path):
-        send_file(dst_path)
+        # send_file(dst_file)
         user_obj = AccountOpertion(username)
         index = user_obj.create_coin(coin=file_hash_value, mesg=mesg)
         return redirect("/uploader/" + str(index) + "/")
-    """
+
 
 @app.route('/uploader/fail/', methods=['POST', 'GET'])
 def upload_fail():
@@ -189,10 +188,21 @@ def upload_ok(index):
 @app.route('/coin/<coin>/', methods=['POST', 'GET'])
 def coin(coin):
     coin_history = BlockChain().get_coin_history(coin)
-    path = get_pic_path(coin)
+    img_url = "/display/img/" + coin
     return render_template("coin.html",
                            coin_history=coin_history,
-                           path=path)
+                           img_url=img_url)
+
+
+@app.route('/display/img/<coin>', methods=['POST', 'GET'])
+def display_img(coin):
+    if coin is None:
+        pass
+    else:
+        image_data = open(get_pic_path(coin), "rb").read()
+        response = make_response(image_data)
+        response.headers['Content-Type'] = 'image/jpg'
+        return response
 
 
 if __name__ == '__main__':

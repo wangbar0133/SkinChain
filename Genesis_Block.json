@@ -1,0 +1,15 @@
+{
+	"header": {
+		"index": 0,
+		"pr_block_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+		"timestamp": "1619191723.2759726",
+		"sender": "eb1d2b43aad8cf60ff9911a894f80ec4f4befccc6c61901d2cc72aac1b1d89d2"
+	},
+	"tran": {
+		"recive": "eb1d2b43aad8cf60ff9911a894f80ec4f4befccc6c61901d2cc72aac1b1d89d2",
+		"coin": "1f0e6968fc800be658bbb21ef27c18af",
+		"mesg": "Genesis_Block"
+	},
+	"sign": "kFC7si5HDshII9m44G7ucfgrsfy0yqD1Qab42+DpO0Qp90Vs1R3/rEtVqQEW864LzMOkCFqBHAJrDtThRn5nBQ",
+	"block_hash": "c5bf4a85dc0849b09e47bf0de2de5b5c1dad8c58eaa948e583ecdb38a125be44"
+}

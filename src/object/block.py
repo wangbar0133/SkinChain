@@ -1,4 +1,5 @@
 import time
+import json
 
 from src.bin.encrypt import sign, hash_sha256
 
@@ -26,6 +27,7 @@ class Block(object):
             "sign": self.sign_value,
             "block_hash": self.block_hash
         }
+        self.block_dict = json.loads(self.block.__str__().replace("'", '"'))
 
     def print_block(self):
         print(self.block)
@@ -56,3 +58,11 @@ if __name__ == "__main__":
     sign_value = sign(string, sender)
     print(sign_value)
     """
+    block = Block(index=0,
+                  sender="2b3f734685ff089104fa1cbb02cb8ceae723fcfb5b9fed9fd00d09c3d11a0ce6",
+                  recive="2b3f734685ff089104fa1cbb02cb8ceae723fcfb5b9fed9fd00d09c3d11a0ce6",
+                  pr_block_hash="0000000000000000000000000000000000000000000000000000000000000000",
+                  coin="fc503153dab068850d83a3e7dbb88585",
+                  mesg="Genesis_Block")
+    print(json.loads(block.block.__str__().replace("'", '"')))
+

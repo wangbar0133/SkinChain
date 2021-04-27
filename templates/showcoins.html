@@ -4,14 +4,14 @@
     <h1>资产</h1>
     <h2>{{ username }}</h2>
     <table>
-        {% for item in pic_path_list %}
+        {% for item in img_url_list %}
         <tr>
             <th>
                 <a href="/coin/{{ item.coin }}">{{ item.coin }}</a>
             </th>
-            <td>
-                <img src="{{ item.path }}">
-            </td>
+            <th>
+                <img src="{{ item.img_url }}" alt="皮肤" style="width:300px" >
+            </th>
         </tr>
         {% endfor %}
     </table>

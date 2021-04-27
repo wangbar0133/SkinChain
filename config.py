@@ -8,5 +8,5 @@ class Config:
     FILEPORT = 9997
     IPPOOL = "192.168.0.255"
     SECRET_KEY = "SECRETKEY"
-    UPLOAD_FOLDER = os.getcwd() + "\\coins\\"
+    UPLOAD_FOLDER = "C:\\Users\\Administrator.DESKTOP-35V3OQH\\SkinChain\\static\\images\\coins\\"
     MAX_CONTENT_LENGTH = 1024 * 1024 * 1024
