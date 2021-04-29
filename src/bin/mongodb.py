@@ -57,6 +57,10 @@ class Db(object):
         except Exception as e:
             Log().error("清空数据库失败：" + str(e))
 
+    def get_chain(self):
+        block = self.mycol.find({}, {"_id": False}).sort("_id", 1)
+        return json.loads(json_util.dumps(block))
+
     def get_top_block(self):
         """获取最新的块"""
         block = self.mycol.find({}, {"_id": False}).sort("_id", -1).limit(1)
@@ -114,5 +118,5 @@ if __name__ == "__main__":
     # block = json.loads(block.__str__().replace("'", '"'))
     # print(type(block))
     # Db().insert_dict(block)
-    print(Db().get_block_list_by_user("2b3f734685ff089104fa1cbb02cb8ceae723fcfb5b9fed9fd00d09c3d11a0ce6"))
+    print(Db().get_chain())
     pass

@@ -1,27 +1,40 @@
 {% extends 'base.html' %}
 
     {% block content %}
-    <img src="{{ img_url }}" alt="皮肤" style="width:650px" >
+    <p style="text-align:center"><img src="{{ img_url }}" alt="皮肤" style="width:1050px"></p>
     <table>
         <tr>
-            <th>时间</th>
-            <th>发送者</th>
-            <th>接收者</th>
-            <th>消息</th>
+            <th>{{ create.detial }}</th>
+            <th>mesg：{{ create.mesg }}</th>
         </tr>
-        {% for item in coin_history %}
-        <tr>
-            <td>{{ item.timestamp }}</td>
-            <td>
-                <a href="/user/{{ item.sender }}/">{{ item.sender }}</a>
-            </td>
-            <td>
-                <a href="/user/{{ item.recive }}/">{{ item.recive}}</a>
-            </td>
-            <td>
-                {{ item.mesg }}
-            </td>
-        </tr>
-        {% endfor %}
     </table>
+
+    <p>交易历史</p>
+    <div style="text-align:center">
+        <table>
+            <tr>
+                <th>时间</th>
+                <th>发送者</th>
+                <th>接收者</th>
+                <th>消息</th>
+            </tr>
+            <tr>
+                <td></td>
+            </tr>
+            {% for item in coin_history %}
+            <tr>
+                <td>{{ item.timestamp }}</td>
+                <td>
+                    <a href="/user/{{ item.sender }}/">{{ item.sender }}</a>
+                </td>
+                <td>
+                    <a href="/user/{{ item.recive }}/">{{ item.recive }}</a>
+                </td>
+                <td>
+                    {{ item.mesg }}
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
     {% endblock %}

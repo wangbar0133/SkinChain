@@ -12,7 +12,6 @@ class BlockChain(Db):
         block_list = self.get_block_list_by_user(user)
         if not block_list:
             return False
-        # print(block_list)
         user_history_list = []
         for block in block_list:
             if block["header"]["sender"] == user and block["tran"]["recive"] != user:
@@ -49,17 +48,25 @@ class BlockChain(Db):
         if not block_list:
             return False
         coin_list = []
+        create = {}
         for block in block_list:
-            coin_list.append({
-                "timestamp": block["header"]["timestamp"],
-                "sender": block["header"]["sender"],
-                "recive": block["tran"]["recive"],
-                "mesg": block["tran"]["mesg"]
-            })
+            if block["header"]["sender"] == block["tran"]["recive"]:
+                create = {
+                    "detial": time.asctime(time.localtime(int(float(block["header"]["timestamp"]))))
+                              + "创建于用户：" + block["header"]["sender"],
+                    "mesg": block["tran"]["mesg"]
+                }
+            else:
+                coin_list.append({
+                    "timestamp": block["header"]["timestamp"],
+                    "sender": block["header"]["sender"],
+                    "recive": block["tran"]["recive"],
+                    "mesg": block["tran"]["mesg"]
+                })
         coin_list = sorted(coin_list, key=lambda i: i['timestamp'])
         for index, coin in enumerate(coin_list):
             coin_list[index]["timestamp"] = time.asctime(time.localtime(int(float(coin["timestamp"]))))
-        return coin_list
+        return create, coin_list
 
     def get_top_block_index(self):
         top_block = self.get_top_block()
@@ -69,6 +76,17 @@ class BlockChain(Db):
         top_block = self.get_top_block()
         return top_block["block_hash"]
 
+    def get_all_coins(self):
+        block_list = self.get_chain()
+        coin_list = list()
+        for block in block_list:
+            if block["header"]["sender"] == block["tran"]["recive"]:
+                coin = block["tran"]["coin"]
+                coin_list.append(coin)
+        return coin_list
+
 
 if __name__ == "__main__":
-    print(BlockChain().get_user_history("2b3f734685ff089104fa1cbb02cb8ceae723fcfb5b9fed9fd00d09c3d11a0ce6"))
+    block_list = BlockChain().get_all_coins()
+    print(block_list)
+    pass

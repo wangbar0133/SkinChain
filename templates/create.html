@@ -1,16 +1,41 @@
 {% extends 'base.html' %}
-    
+    {% block mysytle %}
+    <style>
+        .center-block {
+            background-color: #D7D3AD;
+            width: 650px;
+            height: 400px;
+            padding: 0 50px;
+            position: fixed;
+            left: 50%;
+            border-radius: 15px;
+            top:50%;
+            transform: translate(-50%,-50%);
+        }
+        .center-block .header {
+            font-size:  60px;
+            font-weight: bold;
+            text-align: center;
+            line-height: 200px;
+        }
+        .center-block .input-item {
+            display: block;
+            width: 100%;
+            margin-bottom: 20px;
+            border: none;
+            padding: 10px;
+            border-bottom: 2px solid rgb(128,125,125);
+            font-size: 18px;
+            outline: none;
+        }
+
+    </style>
+    {% endblock %}
     {% block content %}
-        <h1>创建新账号</h1>
-        <h2>新账户</h2>
-        <table>
-            <tr>
-                <th>用户名</th>
-                <td>{{ username }}</td>
-            </tr>
-            <tr>
-                <th>密码</th>
-                <td>{{ password }}</td>
-            </tr>
-        </table>
+    <h1 style="text-align:center">创建新账号</h1>
+    <div class="center-block">
+        <div class="header">新账户</div>
+        <div class="input-item">账户: {{ username }}</div>
+        <div class="input-item">密 码: {{ password }}</div>
+    </div>
     {% endblock %}

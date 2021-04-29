@@ -1,22 +1,31 @@
 {% extends 'base.html' %}
+    {% block mysytle %}
+    <style>
 
+    </style>
+    {% endblock %}
     {% block content %}
-    <h1>交易</h1>
     <div>
-        <form action="" method="post">
-            <table>
+        <h1  class="text-align:center">交易</h1>
+        <form action="" method="post" class="text-align:center">
+            <table class="text-align:center">
                 <p>选择皮肤</p>
-                {% for item in pic_path_list %}
+                    {% for item in img_url_list %}
+                        <tr>
+                            <th>
+                                <input type="checkbox" id="pic" value="{{ item.coin }}" name="pic">
+                            </th>
+                            <td>
+                                <img src="{{ item.img_url }}" style="width:350px">
+                            </td>
+                            <td>
+                                {{ item.coin }}
+                            </td>
+                        </tr>
+                        {% endfor %}
                 <tr>
-                    <th>
-                        <input type="checkbox" id="pic" value="{{ item.coin }}" />
-                    </th>
-                    <td>
-                        <img src="{{  item.path }}">
-                    </td>
+                    <td>输入目标账户</td>
                 </tr>
-                {% endfor %}
-                <p>输入目标账户</p>
                 <tr>
                     <td>
                         username:
@@ -25,8 +34,14 @@
                         <input type="text" name="username" id="username" maxlength="64" style="width:500px">
                     </td>
                 </tr>
+                <tr>
+                    <td>消息</td>
+                    <td>
+                        <input type="text" name="message" id="message" maxlength="64" style="width:500px">
+                    </td>
+                </tr>
             </table>
-            <input type="submit" onclick="check_form()" value='{{("确定")}}'>
+            <input type="submit" onclick="check_form()" class="btn" value='{{("确定")}}'>
         </form>
     </div>
     <script>

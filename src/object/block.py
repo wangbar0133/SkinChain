@@ -27,7 +27,7 @@ class Block(object):
             "sign": self.sign_value,
             "block_hash": self.block_hash
         }
-        self.block_dict = json.loads(self.block.__str__().replace("'", '"'))
+        self.block_dict = json.loads(self.block.__str__().replace("'", '"').replace('""', "None"))
 
     def print_block(self):
         print(self.block)

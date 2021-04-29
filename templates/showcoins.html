@@ -1,18 +1,28 @@
 {% extends 'base.html' %}
-
+{% block mysytle %}
+    <style>
+        li {
+            list-style: none;
+            float: left;
+            width: 100.3%;
+        }
+        li img {
+            width: 100%;
+        }
+    </style>
+    {% endblock %}
     {% block content %}
-    <h1>资产</h1>
-    <h2>{{ username }}</h2>
-    <table>
-        {% for item in img_url_list %}
-        <tr>
-            <th>
-                <a href="/coin/{{ item.coin }}">{{ item.coin }}</a>
-            </th>
-            <th>
-                <img src="{{ item.img_url }}" alt="皮肤" style="width:300px" >
-            </th>
-        </tr>
-        {% endfor %}
-    </table>
+    <h1 style="text-align:center">资产</h1>
+    <h2 style="text-align:center">{{ username }}</h2>
+    <div>
+        <ul>
+            {% for item in img_url_list %}
+            <li style="text-align:center">
+                <a href="/coin/{{ item.coin }}/">
+                    <img src="{{ item.img_url }}" alt="皮肤" style="width:750px">
+                </a>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
     {% endblock %}
