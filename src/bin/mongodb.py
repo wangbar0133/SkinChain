@@ -1,9 +1,9 @@
 # -*-coding:utf-8-*-
-import os
 import json
-import pymongo
 
+import pymongo
 from bson import json_util
+
 from src.bin.log import Log
 
 

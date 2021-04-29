@@ -1,14 +1,10 @@
 from flask import Flask, render_template, request, redirect, session, make_response
 
-from src.bin.encrypt import check_password, file_hash
-from src.object.account import Account
-from src.mvc import AccountOpertion, BlockChain
-from src.bin.os import move_file, return_img_stream, get_pic_path
-from src.bin.net import send_file
-from src.bin.log import Log
-
 from config import Config
-
+from src.bin.encrypt import check_password
+from src.bin.os import get_pic_path
+from src.mvc import AccountOpertion, BlockChain
+from src.object.account import Account
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = Config.SECRET_KEY
@@ -165,6 +161,7 @@ def uploader():
         user_obj = AccountOpertion(username)
         index = user_obj.create_coin(coin=file_hash_value, mesg=mesg)
         return redirect("/uploader/" + str(index) + "/")
+
 
 
 @app.route('/uploader/fail/', methods=['POST', 'GET'])

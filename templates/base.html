@@ -4,9 +4,11 @@
     <meta charset="UTF-8">
     <title>SkinChain</title>
     <script src="https://cdn.static.runoob.com/libs/jquery/1.10.2/jquery.min.js"></script>
+    <link rel=stylesheet type="text/css" href="{{ url_for('static', filename='css/base.css'}}">
 </head>
 <body>
-    <div>
+    <div class='pg-header'>
+        <a href="/">SkinChain</a>
         <a href="/">首页</a>
         <a href="/login/">登录</a>
         <a href="/create/">注册</a>
@@ -17,5 +19,6 @@
     {% block content %}
 
     {% endblock %}
+    <div  class='pg-footer'></div>
 </body>
 </html>

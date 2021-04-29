@@ -1,13 +1,12 @@
 # -*-coding:utf-8-*-
-import time
 import json
 import socket
+import time
 
 from config import Config
-
-from src.bin.log import Log
-from src.bin.net import Client, UdpServerSock, get_host_ip
 from src.bin.encrypt import check_sign, check_hash
+from src.bin.log import Log
+from src.bin.net import Client, get_host_ip
 from src.object.block import Block
 from src.object.blockchain import BlockChain
 

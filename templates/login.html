@@ -1,29 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SkinChain</title>
+    <script src="https://cdn.static.runoob.com/libs/jquery/1.10.2/jquery.min.js"></script>
+    <style>
+
+    </style>
+
 {% extends 'base.html' %}
 
     {% block content %}
-    <h1>登录</h1>
-    <form action="" method="post" onsubmit="return check_form()">
-        <table>
-            <tr>
-                <th>
-                    username:
-                </th>
-                <td>
-                    <input type="text" name="username" id="username" maxlength="64" style="width:500px">
-                </td>
-            </tr>
-            <tr>
-                <th>
-                    password:
-                </th>
-                <td>
-                    <input type="text" name="password" id="password" maxlength="64" style="width:500px">
-                </td>
-            </tr>
-        </table>
-        <input type="submit" value='{{("确定")}}'>
-        <p>{{ status }}</p>
-    </form>
+    <div class="box">
+        <h2>登录</h2>
+        <form class="form-box" action="" method="post" onsubmit="return check_form()">
+            <div class="inputBox">
+                <input type="text" name="username" id="username" maxlength="64">
+                <label>Username</label>
+            </div>
+            <div class="inputBox">
+                <input type="text" name="password" id="password" maxlength="64">
+                <label>Password</label>
+            </div>
+            <input type="submit" value='{{("确定")}}'>
+        </form>
+    </div>
     <script>
         function check_form(){
             var username = document.getElementById("username").value;

@@ -1,6 +1,5 @@
 import time
 
-
 from src.bin.mongodb import Db
 
 

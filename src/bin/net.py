@@ -1,7 +1,6 @@
 # -*-coding:utf-8-*-
-import socket
-import time
 import json
+import socket
 
 from bson import json_util
 
