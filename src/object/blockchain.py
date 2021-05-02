@@ -85,8 +85,38 @@ class BlockChain(Db):
                 coin_list.append(coin)
         return coin_list
 
+    def get_block_by_user_coin(self, user, coin):
+        chain = self.get_chain()
+        history = list()
+        for block in chain:
+            if (block["header"]["sender"] == user or block["tran"]["recive"] == user) and block["tran"]["coin"] == coin:
+                history.append({
+                    "timestamp": block["header"]["timestamp"],
+                    "coin": block["tran"]["coin"],
+                    "sender": block["header"]["sender"],
+                    "recive": block["tran"]["recive"],
+                    "mesg": block["tran"]["mesg"]
+                })
+        return history
+
+    def get_history(self):
+        chain = self.get_chain()
+        history = list()
+        for block in chain:
+            history.append({
+                "timestamp": time.asctime(time.localtime(int(float(block["header"]["timestamp"])))),
+                "coin": block["tran"]["coin"],
+                "img_url": "/display/img/" + block["tran"]["coin"],
+                "sender": block["header"]["sender"],
+                "recive": block["tran"]["recive"],
+                "mesg": block["tran"]["mesg"]
+            })
+        return history
+
 
 if __name__ == "__main__":
-    block_list = BlockChain().get_all_coins()
-    print(block_list)
+    user = "2b3f734685ff089104fa1cbb02cb8ceae723fcfb5b9fed9fd00d09c3d11a0ce6"
+    coin = "fc503153dab068850d83a3e7dbb88585"
+    chain = BlockChain()
+    print(chain.get_history())
     pass

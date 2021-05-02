@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+    {% block mysytle %}
+    <style>
+        .center-block {
+            background-color: #D7D3AD;
+            width: 650px;
+            height: 400px;
+            padding: 0 50px;
+            position: fixed;
+            left: 50%;
+            border-radius: 15px;
+            top:50%;
+            transform: translate(-50%,-50%);
+        }
+        .center-block .header {
+            font-size:  60px;
+            font-weight: bold;
+            text-align: center;
+            line-height: 200px;
+        }
+        .center-block .form-wrapper .input-item {
+            display: block;
+            width: 100%;
+            margin-bottom: 20px;
+            border: none;
+            padding: 10px;
+            border-bottom: 2px solid rgb(128,125,125);
+            font-size: 15px;
+            outline: none;
+        }
+        .center-block .form-wrapper .input-item::placeholder {
+            text-transform: uppercase;
+        }
+        .center-block .form-wrapper .btn {
+            font-size:  20px;
+            display: block;
+            text-align: center;
+            position: fixed;
+            color: #189199;
+            background-color: #FAD19B;
+            margin:0 auto;
+        }
+    </style>
+    {% endblock %}
+    {% block content %}
+        <div class="center-block">
+            <div class="header">登录</div>
+            <form class="form-wrapper" action="" method="post" onsubmit="return check_form()">
+                <input type="text" name="username" id="username" maxlength="64" required="" class="input-item">
+                <div style="text-align:center">
+                    <input type="submit" class="btn" value='{{("确定")}}'>
+                </div>
+            </form>
+        </div>
+    <script>
+        function check_form(){
+            var username = document.getElementById("username").value;
+
+            if (username.length == 0){
+                alert("请输入要查询的内容");
+                return false;
+            }
+
+            if ((username.length != 64) && (username.length != 32)){
+                alert("请输入用户名或皮肤");
+                return false;
+            }
+
+            reg_str = "^[a-z0-9]+$";
+            var reg = new RegExp(reg_str);
+
+            if (!reg.test(username)){
+                alert("用户名应为数字与小写字母");
+                return false;
+            }
+
+            return true;
+        }
+    </script>
+    {% endblock %}

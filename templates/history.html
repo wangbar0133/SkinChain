@@ -1,15 +1,16 @@
 {% extends 'base.html' %}
 
     {% block content %}
-    <h1>交易记录</h1>
+    <h1>记录</h1>
     <table>
         <tr>
             <th>时间</th>
             <th>资产</th>
-            <th>描述</th>
+            <th>发送</th>
+            <th>接收</th>
             <th>消息</th>
         </tr>
-        {% for item in trans %}
+        {% for item in historys %}
         <tr>
             <td>{{ item.timestamp }}</td>
             <td>
@@ -18,10 +19,13 @@
                 </a>
             </td>
             <td>
-                {{ item.desc }}
+                {{ item.sender }}
             </td>
             <td>
-                {{ item.mesg }}
+                {{ item.recive}}
+            </td>
+            <td>
+                {{ item.mesg}}
             </td>
         </tr>
         {% endfor %}

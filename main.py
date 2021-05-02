@@ -62,6 +62,16 @@ def user(user):
         return redirect('/login/')
 
 
+@app.route('/users/<user>/', methods=['POST', 'GET'])
+def users(user):
+    user_obj = AccountOpertion(user)
+    username = user
+    coin_count = user_obj.show_coin_count()
+    return render_template('users.html',
+                           username=username,
+                           coin_count=coin_count)
+
+
 @app.route('/user/', methods=['POST', 'GET'])
 def re_login():
     if session.get("password") and session.get("username"):
@@ -187,7 +197,20 @@ def coin(coin):
     img_url = "/display/img/" + coin
     return render_template("coin.html",
                            coin_history=coin_history,
-                           img_url=img_url)
+                           img_url=img_url,
+                           coin=coin)
+
+
+@app.route('/coins/', methods=['POST', 'GET'])
+def coins():
+    coin_list = BlockChain().get_all_coins()
+    img_list = list()
+    for coin in coin_list:
+        img_list.append({"img_url": "/display/img/" + coin,
+                         "coin": coin})
+
+    return render_template("coins.html",
+                           img_list=img_list)
 
 
 @app.route('/display/img/<coin>', methods=['POST', 'GET'])
@@ -199,6 +222,24 @@ def display_img(coin):
         response = make_response(image_data)
         response.headers['Content-Type'] = 'image/jpg'
         return response
+
+
+@app.route('/search/', methods=['POST', 'GET'])
+def search():
+    if request.method == 'POST':
+        username = request.form.get("username")
+        if len(username) == 64:
+            return redirect("/users/" + username + "/")
+        elif len(username) == 32:
+            return redirect("/coin/" + username + "/")
+    return render_template("search.html")
+
+
+@app.route('/history/', methods=['POST', 'GET'])
+def history():
+    historys = BlockChain().get_history()
+    return render_template("history.html",
+                           historys=historys)
 
 
 if __name__ == '__main__':

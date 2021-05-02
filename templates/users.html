@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+    {% block content %}
+    <h1 style="text-align:center">{{ username }}</h1>
+    <div>
+        <table>
+            <tr>
+                <th>
+                    用户名:
+                </th>
+            <td>
+                {{ username }}
+            </td>
+            </tr >
+            <tr>
+                <th>
+                    钱包余额:
+                </th>
+                <td>
+                    {{ coin_count }}
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div>
+        <p><a href="/user/{{ username }}/showcoins/">查看余额</a></p>
+        <p><a href="/user/{{ username }}/showtrans/">查看交易记录</a></p>
+    </div>
+    {% endblock %}
