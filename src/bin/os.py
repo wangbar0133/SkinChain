@@ -13,7 +13,7 @@ def move_file(srcfile, dstpath):
     try:
         if not os.path.exists(dstpath):
             os.mkdir(dstpath)
-        shutil.move(srcfile, dstpath)
+            shutil.move(srcfile, dstpath)
         return True
     except Exception as e:
         Log().error("文件不存在：" + str(e))

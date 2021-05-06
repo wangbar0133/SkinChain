@@ -92,37 +92,42 @@ def go_tran():
 
 @app.route('/user/<user>/tran/', methods=['POST', 'GET'])
 def tran(user):
+    if not session.get("username") and session.get("password"):
+        return redirect('/login/')
     user_obj = AccountOpertion(user)
     coin_list = user_obj.show_coins()
     pic_path_list = []
     for coin in coin_list:
         pic_path_list.append({
             "coin": coin,
-            "path": get_pic_path(coin)
+            "path": "/display/img/" + coin
         })
     if request.method == 'POST':
-        obj_username = request.form.get("obj_username")
-        coin = request.form.get("coin")
+        obj_username = request.form.get("username")
+        coin = request.form.get("pic")
         message = request.form.get("message")
         index = user_obj.send_coin(recive=obj_username, coin=coin, mesg=message, sender_key=session.get("password"))
-        return redirect('/user/' + user + "/tran/succese/" + index + "/")
+        return redirect('/user/' + user + "/tran/succese/" + str(index) + "/")
     return render_template("tran.html",
                            pic_path_list=pic_path_list)
 
 
-@app.route('/user/<user>/tran/succese/<index>', methods=['POST', 'GET'])
+@app.route('/user/<user>/tran/succese/<index>/', methods=['POST', 'GET'])
 def succesed_tran(user, index):
-    block = BlockChain().get_block_by_index(index)
+    import time
+    block = BlockChain().get_block_by_index(int(index))
     recive = block["tran"]["recive"]
-    time = block["header"]["timestamp"]
+    times = time = time.asctime(time.localtime(int(float(block["header"]["timestamp"]))))
     coin = block["tran"]["coin"]
     path = get_pic_path(coin)
+    img_url = "/display/img/" + coin
     return render_template("succesetran.html",
                            sender=user,
                            recive=recive,
-                           time=time,
+                           time=times,
                            coin=coin,
-                           path=path)
+                           path=path,
+                           img_url=img_url)
 
 
 @app.route('/user/<user>/showtrans/', methods=['POST', 'GET'])
@@ -181,10 +186,10 @@ def upload_fail():
 @app.route('/uploader/<index>/', methods=['POST', 'GET'])
 def upload_ok(index):
     import time
-    block = BlockChain().get_block_by_index(index)
-    time = time.asctime(time.localtime(block["header"]["timestamp"]))
+    block = BlockChain().get_block_by_index(int(index))
+    time = time.asctime(time.localtime(int(float(block["header"]["timestamp"]))))
     coin = block["tran"]["coin"]
-    path = get_pic_path(coin)
+    path = "/display/img/" + coin
     return render_template("succeseupload.html",
                            time=time,
                            coin=coin,
@@ -193,12 +198,13 @@ def upload_ok(index):
 
 @app.route('/coin/<coin>/', methods=['POST', 'GET'])
 def coin(coin):
-    coin_history = BlockChain().get_coin_history(coin)
+    create, coin_history = BlockChain().get_coin_history(coin)
     img_url = "/display/img/" + coin
     return render_template("coin.html",
                            coin_history=coin_history,
                            img_url=img_url,
-                           coin=coin)
+                           coin=coin,
+                           create=create)
 
 
 @app.route('/coins/', methods=['POST', 'GET'])

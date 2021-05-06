@@ -93,8 +93,8 @@ class AccountOpertion(BlockChain):
         Client().sync_chain(index=index - 1)
         block = Block(index, sender, sender_key, recive, pr_block_hash, coin, mesg)
         if BlockChain().insert(block):
-            Client().push_blocks([block])
-        return index
+            # Client().push_blocks([block])
+            return index
 
     def create_coin(self, coin, sender_key, mesg=None):
         """上传作品"""

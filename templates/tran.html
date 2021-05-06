@@ -1,48 +1,48 @@
 {% extends 'base.html' %}
     {% block mysytle %}
     <style>
-
     </style>
     {% endblock %}
     {% block content %}
-    <div>
-        <h1  class="text-align:center">交易</h1>
-        <form action="" method="post" class="text-align:center">
-            <table class="text-align:center">
-                <p>选择皮肤</p>
-                    {% for item in img_url_list %}
-                        <tr>
-                            <th>
-                                <input type="checkbox" id="pic" value="{{ item.coin }}" name="pic">
-                            </th>
-                            <td>
-                                <img src="{{ item.img_url }}" style="width:350px">
-                            </td>
-                            <td>
-                                {{ item.coin }}
-                            </td>
-                        </tr>
-                        {% endfor %}
-                <tr>
-                    <td>输入目标账户</td>
-                </tr>
-                <tr>
-                    <td>
-                        username:
-                    </td>
-                    <td>
-                        <input type="text" name="username" id="username" maxlength="64" style="width:500px">
-                    </td>
-                </tr>
-                <tr>
-                    <td>消息</td>
-                    <td>
-                        <input type="text" name="message" id="message" maxlength="64" style="width:500px">
-                    </td>
-                </tr>
-            </table>
-            <input type="submit" onclick="check_form()" class="btn" value='{{("确定")}}'>
-        </form>
+    <div class="center-block">
+        <div class="header">交易</div>
+            <form action="" method="post" class="text-align:center">
+                <table class="text-align:center">
+                    <p>选择皮肤</p>
+                        {% for item in pic_path_list %}
+                            <tr>
+                                <th>
+                                    <input type="checkbox" id="pic" value="{{ item.coin }}" name="pic">
+                                </th>
+                                <td>
+                                    <img src="{{ item.path }}" style="width:350px">
+                                </td>
+                                <td>
+                                    {{ item.coin }}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                    <tr>
+                        <td>输入目标账户</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            username:
+                        </td>
+                        <td>
+                            <input type="text" name="username" id="username" maxlength="64" style="width:500px">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>消息</td>
+                        <td>
+                            <input type="text" name="message" id="message" maxlength="64" style="width:500px">
+                        </td>
+                    </tr>
+                </table>
+                <input type="submit" onclick="check_form()" class="btn" value='{{("确定")}}'>
+            </form>
+        </div>
     </div>
     <script>
         function check_form(){

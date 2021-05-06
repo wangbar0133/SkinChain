@@ -1,29 +1,62 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>SkinChain</title>
-    <script src="https://cdn.static.runoob.com/libs/jquery/1.10.2/jquery.min.js"></script>
-    <style>
-
-    </style>
-
 {% extends 'base.html' %}
-
+    {% block mysytle %}
+    <style>
+        .center-block {
+            background-color: #D7D3AD;
+            width: 650px;
+            height: 400px;
+            padding: 0 50px;
+            position: fixed;
+            left: 50%;
+            border-radius: 15px;
+            top:50%;
+            transform: translate(-50%,-50%);
+        }
+        .center-block .header {
+            font-size:  60px;
+            font-weight: bold;
+            text-align: center;
+            line-height: 200px;
+        }
+        .center-block .form-wrapper .input-item {
+            display: block;
+            width: 100%;
+            margin-bottom: 20px;
+            border: none;
+            padding: 10px;
+            border-bottom: 2px solid rgb(128,125,125);
+            font-size: 15px;
+            outline: none;
+        }
+        .center-block .form-wrapper .input-item::placeholder {
+            text-transform: uppercase;
+        }
+        .center-block .form-wrapper .btn {
+            font-size:  20px;
+            display: block;
+            text-align: center;
+            position: fixed;
+            color: #189199;
+            background-color: #FAD19B;
+            margin:0 auto;
+        }
+    </style>
+    {% endblock %}
     {% block content %}
-    <div class="box">
-        <h2>登录</h2>
-        <form class="form-box" action="" method="post" onsubmit="return check_form()">
-            <div class="inputBox">
-                <input type="text" name="username" id="username" maxlength="64">
-                <label>Username</label>
-            </div>
-            <div class="inputBox">
-                <input type="text" name="password" id="password" maxlength="64">
-                <label>Password</label>
-            </div>
-            <input type="submit" value='{{("确定")}}'>
-        </form>
+    <div class="center-block">
+        <div class="header">登录</div>
+            <form class="form-wrapper" action="" method="post" onsubmit="return check_form()">
+                <div class="inputBox">
+                    <label>Username</label>
+                    <input class="input-item" type="text" name="username" id="username" maxlength="64">
+                </div>
+                <div class="inputBox">
+                    <label>Password</label>
+                    <input class="input-item" type="text" name="password" id="password" maxlength="64">
+                </div>
+                <input type="submit" class="btn" value='{{("确定")}}'>
+            </form>
+        </div>
     </div>
     <script>
         function check_form(){

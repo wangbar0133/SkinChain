@@ -115,8 +115,12 @@ class BlockChain(Db):
 
 
 if __name__ == "__main__":
-    user = "2b3f734685ff089104fa1cbb02cb8ceae723fcfb5b9fed9fd00d09c3d11a0ce6"
-    coin = "fc503153dab068850d83a3e7dbb88585"
-    chain = BlockChain()
-    print(chain.get_history())
+    # user = "2b3f734685ff089104fa1cbb02cb8ceae723fcfb5b9fed9fd00d09c3d11a0ce6"
+    # coin = "fc503153dab068850d83a3e7dbb88585"
+    # chain = BlockChain()
+    # print(chain.get_history())
+    index = 1
+    block = BlockChain().get_block_by_index(index)
+    time = time.asctime(time.localtime(int(float(block["header"]["timestamp"]))))
+    print(time)
     pass
