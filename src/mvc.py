@@ -85,18 +85,18 @@ class AccountOpertion(BlockChain):
                 coin_list.append(coin)
         return coin_list
 
-    def send_coin(self, recive, coin, mesg):
+    def send_coin(self, recive, coin, mesg, sender_key):
         """向别人交易"""
         index = BlockChain().get_top_block_index() + 1
         sender = self.user
         pr_block_hash = BlockChain().get_top_block_hash()
         Client().sync_chain(index=index - 1)
-        block = Block(index, sender, recive, pr_block_hash, coin, mesg)
+        block = Block(index, sender, sender_key, recive, pr_block_hash, coin, mesg)
         if BlockChain().insert(block):
             Client().push_blocks([block])
         return index
 
-    def create_coin(self, coin, mesg=None):
+    def create_coin(self, coin, sender_key, mesg=None):
         """上传作品"""
         index = BlockChain().get_top_block_index() + 1
         sender = self.user
@@ -104,7 +104,7 @@ class AccountOpertion(BlockChain):
         Client().sync_chain(index=index - 1)
         # time.sleep(3)
         pr_block_hash = BlockChain().get_top_block_hash()
-        block = Block(index, sender, recive, pr_block_hash, coin, mesg)
+        block = Block(index, sender, sender_key, recive, pr_block_hash, coin, mesg)
         if BlockChain().insert(block):
             block_empty_list = list()
             print(block.block_dict)

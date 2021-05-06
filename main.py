@@ -1,8 +1,8 @@
 from flask import Flask, render_template, request, redirect, session, make_response
 
 from config import Config
-from src.bin.encrypt import check_password
-from src.bin.os import get_pic_path
+from src.bin.encrypt import check_password, file_hash
+from src.bin.os import get_pic_path, move_file
 from src.mvc import AccountOpertion, BlockChain
 from src.object.account import Account
 
@@ -94,7 +94,7 @@ def tran(user):
         obj_username = request.form.get("obj_username")
         coin = request.form.get("coin")
         message = request.form.get("message")
-        index = user_obj.send_coin(recive=obj_username, coin=coin, mesg=message)
+        index = user_obj.send_coin(recive=obj_username, coin=coin, mesg=message, sender_key=session.get("password"))
         return redirect('/user/' + user + "/tran/succese/" + index + "/")
     return render_template("tran.html",
                            pic_path_list=pic_path_list)
@@ -159,9 +159,8 @@ def uploader():
     if move_file(file_path, dst_path):
         # send_file(dst_file)
         user_obj = AccountOpertion(username)
-        index = user_obj.create_coin(coin=file_hash_value, mesg=mesg)
+        index = user_obj.create_coin(coin=file_hash_value, mesg=mesg, sender_key=session.get("password"))
         return redirect("/uploader/" + str(index) + "/")
-
 
 
 @app.route('/uploader/fail/', methods=['POST', 'GET'])

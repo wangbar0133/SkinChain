@@ -7,7 +7,7 @@ from src.bin.encrypt import sign, hash_sha256
 class Block(object):
     """区块对象"""
 
-    def __init__(self, index, sender, recive, pr_block_hash, coin, mesg):
+    def __init__(self, index, sender, sender_key, recive, pr_block_hash, coin, mesg):
         self.header = {
             "index": index,
             "pr_block_hash": pr_block_hash,
@@ -19,7 +19,7 @@ class Block(object):
             "coin": coin,
             "mesg": mesg
         }
-        self.sign_value = sign(self.header.__str__() + self.tran.__str__(), sender)
+        self.sign_value = sign(self.header.__str__() + self.tran.__str__(), sender_key)
         self.block_hash = hash_sha256((self.header.__str__() + self.tran.__str__() + self.sign_value).encode("utf8"))
         self.block = {
             "header": self.header,

@@ -39,7 +39,6 @@ class BlockChain(Db):
                     "coin": block["tran"]["coin"],
                     "mesg": block["tran"]["mesg"]
                 })
-        print(user_history_list)
         user_history_list = sorted(user_history_list, key=lambda i: i['timestamp'])
         for index, coin in enumerate(user_history_list):
             user_history_list[index]["timestamp"] = time.asctime(time.localtime(int(float(coin["timestamp"]))))
