@@ -1,6 +1,9 @@
 # -*-coding:utf-8-*-
 import json
 import socket
+import threading
+import pymongo
+import os
 
 from bson import json_util
 
@@ -92,3 +95,64 @@ class UdpServerSock(object):
         sock.bind((get_host_ip(), Config.PORT))
         sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
         self.sock = sock
+
+
+class Node(object):
+    """获取存活节点"""
+    def __init__(self):
+        IPPOOL = Config.IPPOOL
+        conf = IPPOOL.split(".")
+        ip_prefix = ""
+        for count in range(0, 3):
+            if conf[count] != "255":
+                ip_prefix = ip_prefix + conf[count] + "."
+
+        self.ip_pool = list()
+        for count in range(1, 255):
+            self.ip_pool.append(ip_prefix + str(count))
+
+        self.ip_alive_list = list()
+        self.ip_list = list()
+
+    def _ping(self, ip):
+        cmd = "ping -n 1 " + ip + '|findstr TTL'
+        res = os.popen(cmd)
+        if res.readlines():
+            self.ip_alive_list.append(ip)
+
+    def _ping_mongod(self, ip):
+        try:
+            myclient = pymongo.MongoClient(host=ip, port=27017, serverSelectionTimeoutMS=50, socketTimeoutMS=50)
+            dblist = myclient.list_database_names()
+            if "skin_chain" in dblist:
+                self.ip_list.append(ip)
+        except:
+            pass
+
+    def find(self):
+        thread_list = list()
+
+        for ip in self.ip_pool:
+            thread_list.append(threading.Thread(target=self._ping, args=(ip,)))
+
+        for thread in thread_list:
+            thread.start()
+
+        thread_mongod_list = list()
+
+        for ip in self.ip_alive_list:
+            thread_mongod_list.append(threading.Thread(target=self._ping_mongod, args=(ip,)))
+
+        self.ip_list = list()
+
+        for thread in thread_mongod_list:
+            thread.start()
+
+        for thread in thread_mongod_list:
+            thread.join()
+
+        return self.ip_list
+
+
+if __name__ == "__main__":
+    print(Node().find())
