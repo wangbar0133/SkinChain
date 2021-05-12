@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, session, make_response
+from flask import Flask, render_template, request, redirect, session, make_response, abort
 
 from config import Config
 from src.bin.encrypt import check_password, file_hash
@@ -10,6 +10,12 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = Config.SECRET_KEY
 app.config['UPLOAD_FOLDER'] = Config.UPLOAD_FOLDER
 app.config['MAX_CONTENT_LENGTH'] = Config.MAX_CONTENT_LENGTH
+
+
+@app.before_request
+def limit_remote_addr():
+    if request.remote_addr != '192.168.0.15':
+        abort(403)  # Forbidden
 
 
 @app.route('/', methods=['POST', 'GET'])
