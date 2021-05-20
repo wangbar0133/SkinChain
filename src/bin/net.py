@@ -116,13 +116,13 @@ class Node(object):
         self.ip_alive_list = list()
         self.ip_list = list()
 
-    def _ping(self, ip):
+    def __ping(self, ip):
         cmd = "ping -n 1 " + ip + '|findstr TTL'
         res = os.popen(cmd)
         if res.readlines():
             self.ip_alive_list.append(ip)
 
-    def _ping_mongod(self, ip):
+    def __ping_mongod(self, ip):
         try:
             myclient = pymongo.MongoClient(host=ip, port=27017, serverSelectionTimeoutMS=50, socketTimeoutMS=50)
             dblist = myclient.list_database_names()
@@ -135,7 +135,7 @@ class Node(object):
         thread_list = list()
 
         for ip in self.ip_pool:
-            thread_list.append(threading.Thread(target=self._ping, args=(ip,)))
+            thread_list.append(threading.Thread(target=self.__ping, args=(ip,)))
 
         for thread in thread_list:
             thread.start()
@@ -146,11 +146,9 @@ class Node(object):
         thread_mongod_list = list()
 
         for ip in self.ip_alive_list:
-            thread_mongod_list.append(threading.Thread(target=self._ping_mongod, args=(ip,)))
+            thread_mongod_list.append(threading.Thread(target=self.__ping_mongod, args=(ip,)))
 
         self.ip_list = list()
-
-        print(self.ip_alive_list)
 
         for thread in thread_mongod_list:
             thread.start()
