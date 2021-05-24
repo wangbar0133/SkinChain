@@ -123,7 +123,7 @@ def succesed_tran(user, index):
     import time
     block = BlockChain().get_block_by_index(int(index))
     recive = block["tran"]["recive"]
-    times = time = time.asctime(time.localtime(int(float(block["header"]["timestamp"]))))
+    times = time.asctime(time.localtime(int(float(block["header"]["timestamp"]))))
     coin = block["tran"]["coin"]
     path = get_pic_path(coin)
     img_url = "/display/img/" + coin
