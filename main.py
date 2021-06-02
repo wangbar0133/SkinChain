@@ -12,10 +12,10 @@ app.config['UPLOAD_FOLDER'] = Config.UPLOAD_FOLDER
 app.config['MAX_CONTENT_LENGTH'] = Config.MAX_CONTENT_LENGTH
 
 
-@app.before_request
-def limit_remote_addr():
-    if request.remote_addr != '192.168.0.15':
-        abort(403)  # Forbidden
+# @app.before_request
+# def limit_remote_addr():
+#     if request.remote_addr != '192.168.0.15':
+#         abort(403)  # Forbidden
 
 
 @app.route('/', methods=['POST', 'GET'])
